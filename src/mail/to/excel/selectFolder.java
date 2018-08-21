@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -23,6 +25,7 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -55,6 +58,8 @@ public class selectFolder extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         folderList = new javax.swing.JList<>();
         jButton1 = new javax.swing.JButton();
+        progressBar = new javax.swing.JProgressBar();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -82,8 +87,14 @@ public class selectFolder extends javax.swing.JFrame {
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(145, 145, 145)
-                        .addComponent(jButton1)))
-                .addContainerGap(86, Short.MAX_VALUE))
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(161, 161, 161)
+                        .addComponent(jLabel2)))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -92,9 +103,13 @@ public class selectFolder extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         pack();
@@ -146,7 +161,7 @@ public class selectFolder extends javax.swing.JFrame {
         });
     }
 
-    public void check(String host,String port, String storeType,  String user,
+    public void check(String host, String port, String storeType, String user,
             String password) {
         try {
             Host = host;
@@ -155,14 +170,23 @@ public class selectFolder extends javax.swing.JFrame {
             User = user;
             Password = password;
             StoreType = storeType;
-            //create properties field
-           Properties props = new Properties();
-    	  
-          // server setting
-          props.put(String.format("mail.%s.host", storeType), host);
-          props.put(String.format("mail.%s.port", storeType), port);
-    	  Session session = Session.getDefaultInstance(props, null);
-    	  Store store = session.getStore("imap");
+            Store store;
+            if (StoreType.equals("imaps") || StoreType.equals("pop3s")) {
+                Properties props = System.getProperties();
+                props.setProperty("mail.store.protocol", "imaps");
+                Session session = Session.getDefaultInstance(props, null);
+                store = session.getStore("imaps");
+            } else {
+                //create properties field
+                Properties props = new Properties();
+
+                // server setting
+                props.put(String.format("mail.%s.host", storeType), host);
+                props.put(String.format("mail.%s.port", storeType), port);
+                Session session = Session.getDefaultInstance(props, null);
+                store = session.getStore("imap");
+            }
+
             store.connect(host, user, password);
             System.out.println(store);
 
@@ -185,82 +209,114 @@ public class selectFolder extends javax.swing.JFrame {
 
     public void transfer(String folder) {
         ArrayList<String> addresses = new ArrayList<>();
-        try {
-            Properties props = new Properties();
-    	  
-          // server setting
-          props.put(String.format("mail.%s.host", StoreType), Host);
-          props.put(String.format("mail.%s.port", StoreType), Port);
-    	  Session session = Session.getDefaultInstance(props, null);
-    	  Store store = session.getStore("imap");
-            store.connect(Host, User, Password);
-            System.out.println(store);
-
-            Folder emailFolder = store.getFolder(folder);
-            emailFolder.open(Folder.READ_ONLY);
-            // retrieve the messages from the folder in an array and print it
-            Message[] messages = emailFolder.getMessages();
-            for (int i = 0, n = messages.length; i < n; i++) {
-                Message message = messages[i];
-                System.out.println("---------------------------------");
-                System.out.println("Email Number " + (i + 1));
-                System.out.println("Subject: " + message.getSubject());
+        new Thread() {
+            public void run() {
                 try {
-                    for (Address allRecipient : message.getAllRecipients()) {
-                        if(allRecipient.toString().contains("<") && allRecipient.toString().contains(">")){
-                            addresses.add(allRecipient.toString().substring(allRecipient.toString().indexOf("<")+1,allRecipient.toString().indexOf(">")));
+                    Store store;
+                    if (StoreType.equals("imaps") || StoreType.equals("pop3s")) {
+                        Properties props = System.getProperties();
+                        props.setProperty("mail.store.protocol", "imaps");
+                        Session session = Session.getDefaultInstance(props, null);
+                        store = session.getStore("imaps");
+                    } else {
+                        //create properties field
+                        Properties props = new Properties();
+
+                        // server setting
+                        props.put(String.format("mail.%s.host", StoreType), Host);
+                        props.put(String.format("mail.%s.port", StoreType), Port);
+                        Session session = Session.getDefaultInstance(props, null);
+                        store = session.getStore("imap");
+                    }
+                    store.connect(Host, User, Password);
+                    System.out.println(store);
+
+                    Folder emailFolder = store.getFolder(folder);
+                    emailFolder.open(Folder.READ_ONLY);
+                    // retrieve the messages from the folder in an array and print it
+                    Message[] messages = emailFolder.getMessages();
+
+                    progressBar.setValue(0);
+                    jLabel2.setText("Progress: 0/" + messages.length);
+                    progressBar.setMaximum(messages.length);
+                    progressBar.setStringPainted(true);
+
+                    for (int i = 0, n = messages.length; i < n; i++) {
+                        Message message = messages[i];
+                        progressBar.setValue(i);
+                        jLabel2.setText("Progress: " + i + "/" + messages.length);
+                        progressBar.repaint();
+                        System.out.println("---------------------------------");
+                        System.out.println("Email Number " + (i + 1));
+                        System.out.println("Subject: " + message.getSubject());
+
+                        try {
+                            for (Address allRecipient : message.getAllRecipients()) {
+                                if (allRecipient.toString().contains("<") && allRecipient.toString().contains(">")) {
+                                    addresses.add(allRecipient.toString().substring(allRecipient.toString().indexOf("<") + 1, allRecipient.toString().indexOf(">")));
+                                } else {
+                                    addresses.add(allRecipient.toString());
+                                }
+                            }
+                        } catch (Exception e) {
+
                         }
-                        else{
-                            addresses.add(allRecipient.toString());
+
+                        try {
+                            System.out.println("Text: " + message.getContent().toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(selectFolder.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (MessagingException ex) {
+                            Logger.getLogger(selectFolder.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                } catch (Exception e) {
 
+                    //close the store and folder objects
+                    //emailFolder.close(false);
+                    store.close();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                HashSet<String> addressesSet = new HashSet<>(addresses);
+                XSSFWorkbook workbook = new XSSFWorkbook();
+                XSSFSheet sheet = workbook.createSheet("receiverAddresses");
+
+                int rowNum = 0;
+                System.out.println("Creating excel");
+
+                for (String element : addressesSet) {
+                    Row row = sheet.createRow(rowNum++);
+                    int colNum = 0;
+                    Cell cell = row.createCell(colNum);
+                    cell.setCellValue(element);
                 }
 
-                System.out.println("Text: " + message.getContent().toString());
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(User + ".xlsx");
+                    workbook.write(outputStream);
+                    workbook.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                JOptionPane.showMessageDialog(null, "Done");
+                dispose();
             }
-            //close the store and folder objects
-            //emailFolder.close(false);
-            store.close();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        HashSet<String> addressesSet = new HashSet<>(addresses);
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("receiverAddresses");
 
-        int rowNum = 0;
-        System.out.println("Creating excel");
+        }.start();
 
-        for (String element : addressesSet) {
-            Row row = sheet.createRow(rowNum++);
-            int colNum = 0;
-            Cell cell = row.createCell(colNum);
-            cell.setCellValue(element);
-        }
-
-        try {
-            FileOutputStream outputStream = new FileOutputStream(User+".xlsx");
-            workbook.write(outputStream);
-            workbook.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        JOptionPane.showMessageDialog(null, "Done");
-        dispose();
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> folderList;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JProgressBar progressBar;
     // End of variables declaration//GEN-END:variables
 }
