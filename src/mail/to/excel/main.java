@@ -44,6 +44,8 @@ public class main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         hostInput = new javax.swing.JTextField();
         emailInput = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -51,17 +53,31 @@ public class main extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         passInput = new javax.swing.JPasswordField();
         jButton1 = new javax.swing.JButton();
+        portInput = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        imapsRadio = new javax.swing.JRadioButton();
+        imapRadio = new javax.swing.JRadioButton();
+        smtpRadio = new javax.swing.JRadioButton();
+        pop3Radio = new javax.swing.JRadioButton();
+        pop3sRadio = new javax.swing.JRadioButton();
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        hostInput.setText("imap.gmail.com");
         hostInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hostInputActionPerformed(evt);
             }
         });
 
-        emailInput.setText("@gmail.com");
+        emailInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emailInputActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Host address:");
 
@@ -76,24 +92,55 @@ public class main extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Port:");
+
+        imapsRadio.setText("IMAPS");
+        imapsRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imapsRadioActionPerformed(evt);
+            }
+        });
+
+        imapRadio.setText("IMAP");
+
+        smtpRadio.setText("SMTP");
+
+        pop3Radio.setText("POP3");
+
+        pop3sRadio.setText("POP3S");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(emailInput)
-                        .addComponent(hostInput, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-                        .addComponent(passInput)))
-                .addGap(77, 77, 77))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(imapsRadio)
+                        .addGap(18, 18, 18)
+                        .addComponent(imapRadio)
+                        .addGap(18, 18, 18)
+                        .addComponent(smtpRadio)
+                        .addGap(18, 18, 18)
+                        .addComponent(pop3Radio)
+                        .addGap(18, 18, 18)
+                        .addComponent(pop3sRadio)
+                        .addContainerGap(26, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton1)
+                            .addComponent(emailInput)
+                            .addComponent(hostInput, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .addComponent(passInput)
+                            .addComponent(portInput))
+                        .addGap(77, 77, 77))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -102,17 +149,28 @@ public class main extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(hostInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(emailInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(portInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(imapsRadio)
+                    .addComponent(imapRadio)
+                    .addComponent(smtpRadio)
+                    .addComponent(pop3Radio)
+                    .addComponent(pop3sRadio))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(emailInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(passInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38)
+                .addGap(15, 15, 15)
                 .addComponent(jButton1)
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addGap(29, 29, 29))
         );
 
         pack();
@@ -125,14 +183,35 @@ public class main extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
 	String host = hostInput.getText();
-        String mailStoreType = "imaps";
+        String mailStoreType = "";
         String username = emailInput.getText();
         String password = new String(passInput.getPassword());
+        String port = portInput.getText();
+        
+        if(imapRadio.isSelected()){
+            mailStoreType = "imap";
+        }else if(imapsRadio.isSelected()){
+            mailStoreType = "imaps";
+        }else if(pop3Radio.isSelected()){
+            mailStoreType = "pop3";
+        }else if(pop3sRadio.isSelected()){
+            mailStoreType = "pop3s";
+        }else if(smtpRadio.isSelected()){
+            mailStoreType = "smtp";
+        }
         selectFolder sf = new selectFolder();
-        sf.check(host, mailStoreType, username, password);
+        sf.check(host,port, mailStoreType, username, password);
         sf.setVisible(true);
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void emailInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailInputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailInputActionPerformed
+
+    private void imapsRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imapsRadioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_imapsRadioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -249,10 +328,19 @@ public class main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField emailInput;
     private javax.swing.JTextField hostInput;
+    private javax.swing.JRadioButton imapRadio;
+    private javax.swing.JRadioButton imapsRadio;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPasswordField passInput;
+    private javax.swing.JRadioButton pop3Radio;
+    private javax.swing.JRadioButton pop3sRadio;
+    private javax.swing.JTextField portInput;
+    private javax.swing.JRadioButton smtpRadio;
     // End of variables declaration//GEN-END:variables
 }

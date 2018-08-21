@@ -109,6 +109,7 @@ public class selectFolder extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public String Host;
+    public String Port;
     public String StoreType;
     public String User;
     public String Password;
@@ -145,18 +146,23 @@ public class selectFolder extends javax.swing.JFrame {
         });
     }
 
-    public void check(String host, String storeType, String user,
+    public void check(String host,String port, String storeType,  String user,
             String password) {
         try {
             Host = host;
+            Port = port;
             StoreType = storeType;
             User = user;
             Password = password;
+            StoreType = storeType;
             //create properties field
-            Properties props = System.getProperties();
-            props.setProperty("mail.store.protocol", "imaps");
-            Session session = Session.getDefaultInstance(props, null);
-            Store store = session.getStore("imaps");
+           Properties props = new Properties();
+    	  
+          // server setting
+          props.put(String.format("mail.%s.host", storeType), host);
+          props.put(String.format("mail.%s.port", storeType), port);
+    	  Session session = Session.getDefaultInstance(props, null);
+    	  Store store = session.getStore("imap");
             store.connect(host, user, password);
             System.out.println(store);
 
@@ -180,11 +186,13 @@ public class selectFolder extends javax.swing.JFrame {
     public void transfer(String folder) {
         ArrayList<String> addresses = new ArrayList<>();
         try {
-            //create properties field
-            Properties props = System.getProperties();
-            props.setProperty("mail.store.protocol", "imaps");
-            Session session = Session.getDefaultInstance(props, null);
-            Store store = session.getStore("imaps");
+            Properties props = new Properties();
+    	  
+          // server setting
+          props.put(String.format("mail.%s.host", StoreType), Host);
+          props.put(String.format("mail.%s.port", StoreType), Port);
+    	  Session session = Session.getDefaultInstance(props, null);
+    	  Store store = session.getStore("imap");
             store.connect(Host, User, Password);
             System.out.println(store);
 
